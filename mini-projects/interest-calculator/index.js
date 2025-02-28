@@ -1,9 +1,17 @@
+require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const routes = require('./routes');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use('/api/interest-calculator', routes);
+// Serve public files
+app.use(express.static(path.join(__dirname, 'public')));
 
-module.exports = app;
+// Use mini-project-specific routes
+app.use('/', routes);
+
+app.listen(PORT, () => {
+    console.log(`Interest Calculator running on http://localhost:${PORT}`);
+});

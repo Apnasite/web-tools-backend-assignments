@@ -1,14 +1,17 @@
+require('dotenv').config(); // Load .env variables
 const express = require('express');
 const path = require('path');
+const routes = require('./routes');
 
-const router = express.Router();
+const app = express();
+const PORT = process.env.PORT || 3000; // Use .env port
 
-// Serve mini-project's public folder
-router.use(express.static(path.join(__dirname, 'public')));
+// Serve public files
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Define routes for the mini-project
-router.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Use mini-project-specific routes
+app.use('/', routes);
+
+app.listen(PORT, () => {
+    console.log(`Age Calculator running on http://localhost:${PORT}`);
 });
-
-module.exports = router;
