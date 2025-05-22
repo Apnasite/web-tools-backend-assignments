@@ -1,47 +1,58 @@
 class AgeCalculator extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        // this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
         this.render();
-        this.shadowRoot.querySelector('form').addEventListener('submit', (e) => {
+        this.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.calculateAge();
         });
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
-            <style>
-                .container { padding: 20px; border: 1px solid #ccc; border-radius: 10px; text-align: center; }
-                button { margin-top: 10px; padding: 8px 12px; cursor: pointer; }
-                #result { margin-top: 10px; font-weight: bold; }
-            </style>
-            <div class="container">
-                <h3>Age Calculator</h3>
-                <form>
-                    <label>Date of Birth:</label>
-                    <input type="date" id="dob" required>
-                    <button type="submit">Calculate</button>
-                </form>
-                <div id="result"></div>
+        this.innerHTML = `
+            <div class="d-flex flex-column justify-content-center w-50 mx-auto py-3">
+            <h3 class="mb-4 text-primary">Age Calculator</h3>
+            <form class="card card-body">
+                <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth:</label>
+                <input type="date" id="dob" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Calculate</button>
+            </form>
+            <div id="result" class="alert alert-info mt-3" style="display:none;"></div>
             </div>
         `;
+        // Show result div only when there is content
+        const resultDiv = this.querySelector("#result");
+        const observer = new MutationObserver(() => {
+            resultDiv.style.display = resultDiv.textContent.trim() ? "block" : "none";
+        });
+        observer.observe(resultDiv, { childList: true, subtree: true });
     }
 
     calculateAge() {
-        const dob = new Date(this.shadowRoot.querySelector("#dob").value);
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-            age--;
+        const dobInput = this.querySelector("#dob").value;
+        if (!dobInput) {
+            this.querySelector("#result").textContent = "Please select your date of birth.";
+            return;
         }
-
-        this.shadowRoot.querySelector("#result").textContent = `Your age is ${age} years.`;
+        const birthYear = new Date(dobInput).getFullYear();
+        fetch(`/calculate?birthYear=${birthYear}`)
+            .then(response => response.json())
+            .then(data => {
+                if (typeof data.age === "number") {
+                    this.querySelector("#result").textContent = `Your age is ${data.age} years.`;
+                } else {
+                    this.querySelector("#result").textContent = "Could not calculate age.";
+                }
+            })
+            .catch(() => {
+                this.querySelector("#result").textContent = "Error contacting server.";
+            });
     }
 }
 

@@ -1,47 +1,60 @@
 class InterestCalculator extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        // No shadow DOM
     }
 
     connectedCallback() {
         this.render();
-        this.shadowRoot.querySelector('form').addEventListener('submit', (e) => {
+        this.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.calculateInterest();
         });
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
-            <style>
-                .container { padding: 20px; border: 1px solid #ccc; border-radius: 10px; text-align: center; }
-                button { margin-top: 10px; padding: 8px 12px; cursor: pointer; }
-                #result { margin-top: 10px; font-weight: bold; }
-            </style>
-            <div class="container">
-                <h3>Interest Calculator</h3>
-                <form>
-                    <label>Principal Amount:</label>
-                    <input type="number" id="principal" required><br>
-                    <label>Rate of Interest (% per year):</label>
-                    <input type="number" id="rate" required><br>
-                    <label>Time (years):</label>
-                    <input type="number" id="time" required><br>
-                    <button type="submit">Calculate</button>
+        this.innerHTML = `
+            <div class="d-flex flex-column justify-content-center w-50 mx-auto py-3">
+                <h3 class="mb-4 text-primary">Interest Calculator</h3>
+                <form class="card card-body">
+                    <div class="mb-3">
+                        <label for="principal" class="form-label">Principal Amount:</label>
+                        <input type="number" id="principal" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rate" class="form-label">Rate of Interest (% per year):</label>
+                        <input type="number" id="rate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Time (years):</label>
+                        <input type="number" id="time" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Calculate</button>
                 </form>
-                <div id="result"></div>
+                <div id="result" class="alert alert-info mt-3" style="display:none;"></div>
             </div>
         `;
+        // Show result div only when there is content
+        const resultDiv = this.querySelector("#result");
+        const observer = new MutationObserver(() => {
+            resultDiv.style.display = resultDiv.textContent.trim() ? "block" : "none";
+        });
+        observer.observe(resultDiv, { childList: true, subtree: true });
     }
 
     calculateInterest() {
-        const principal = parseFloat(this.shadowRoot.querySelector("#principal").value);
-        const rate = parseFloat(this.shadowRoot.querySelector("#rate").value);
-        const time = parseFloat(this.shadowRoot.querySelector("#time").value);
+        const principal = parseFloat(this.querySelector("#principal").value);
+        const rate = parseFloat(this.querySelector("#rate").value);
+        const time = parseFloat(this.querySelector("#time").value);
 
-        const interest = (principal * rate * time) / 100;
-        this.shadowRoot.querySelector("#result").textContent = `Interest: ₹${interest.toFixed(2)}`;
+        fetch(`/calculate?principal=${principal}&rate=${rate}&time=${time}`)
+            .then(response => response.json())
+            .then(data => {
+                this.querySelector("#result").textContent = `Interest: ₹${data.interest.toFixed(2)}`;
+            })
+            .catch(() => {
+                this.querySelector("#result").textContent = "Error calculating interest.";
+            });
     }
 }
 
@@ -49,4 +62,4 @@ if (!customElements.get('interest-calculator')) customElements.define('interest-
 
 if (!window.customElementsList) window.customElementsList = [];
 
-if (!window.customElementsList.find(item => item.component === 'interest-calculator')) window.customElementsList.push({ component: 'interest-calculator', componentClass: InterestCalculator })
+if (!window.customElementsList.find(item => item.component === 'interest-calculator')) window.customElementsList.push({ component: 'interest-calculator', componentClass: InterestCalculator });
