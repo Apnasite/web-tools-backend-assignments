@@ -20,10 +20,15 @@ projects.forEach(project => {
     app.use(`/${project}`, express.static(path.join(miniProjectsPath, project, 'public')));
 
     // Import and mount the project router
-    const projectRouterPath = path.join(miniProjectsPath, project, 'index.js');
+    const projectRouterPath = path.join(miniProjectsPath, project, 'routes.js');
     if (fs.existsSync(projectRouterPath)) {
         const projectRouter = require(projectRouterPath);
-        app.use(`/${project}`, projectRouter);
+        // Only use if the export is a function (middleware or router)
+        if (typeof projectRouter === 'function') {
+            app.use(`/${project}`, projectRouter);
+        } else {
+            console.warn(`Warning: ${projectRouterPath} does not export a middleware function or router.`);
+        }
     }
 });
 

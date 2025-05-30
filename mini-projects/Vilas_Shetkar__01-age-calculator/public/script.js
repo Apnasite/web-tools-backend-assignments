@@ -41,7 +41,7 @@ class AgeCalculator extends HTMLElement {
             return;
         }
         const birthYear = new Date(dobInput).getFullYear();
-        fetch(`/calculate?birthYear=${birthYear}`)
+        fetch(`./calculate?birthYear=${birthYear}`)
             .then(response => response.json())
             .then(data => {
                 if (typeof data.age === "number") {

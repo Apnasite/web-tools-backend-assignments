@@ -47,7 +47,7 @@ class InterestCalculator extends HTMLElement {
         const rate = parseFloat(this.querySelector("#rate").value);
         const time = parseFloat(this.querySelector("#time").value);
 
-        fetch(`/calculate?principal=${principal}&rate=${rate}&time=${time}`)
+        fetch(`./calculate?principal=${principal}&rate=${rate}&time=${time}`)
             .then(response => response.json())
             .then(data => {
                 this.querySelector("#result").textContent = `Interest: ₹${data.interest.toFixed(2)}`;
