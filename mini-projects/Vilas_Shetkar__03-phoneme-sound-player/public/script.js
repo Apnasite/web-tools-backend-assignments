@@ -6,15 +6,44 @@ class PhonemeApp extends HTMLElement {
     }
 
     connectedCallback() {
+        // Dynamically load required component scripts if not already loaded
+        this._scriptElements = [];
+        const scripts = [
+            { src: 'login-popup.js', id: 'login-popup-script' },
+            { src: 'register-popup.js', id: 'register-popup-script' },
+            { src: 'phoneme-sound-player.js', id: 'phoneme-sound-player-script' }
+        ];
+        scripts.forEach(({ src, id }) => {
+            if (!document.getElementById(id)) {
+                const script = document.createElement('script');
+                script.src = src;
+                script.defer = true;
+                script.id = id;
+                document.head.appendChild(script);
+                this._scriptElements.push(script);
+            }
+        });
+
         this.render();
         this.cacheDom();
         this.addEventListeners();
         this.updateUI();
     }
 
+    disconnectedCallback() {
+        // Remove dynamically added scripts
+        if (this._scriptElements) {
+            this._scriptElements.forEach(script => {
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+            });
+            this._scriptElements = [];
+        }
+    }
+
     render() {
         this.innerHTML = `
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <div id="auth-container" class="text-center my-5">
             <button id="loginBtn" class="btn btn-primary m-2">Login</button>
             <button id="registerBtn" class="btn btn-secondary m-2">Register</button>
