@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const router = express.Router();
 router.use(express.json());
-router.use(cors());
+// router.use(cors());
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/phoneme-sound-player';
 
