@@ -28,7 +28,14 @@ class PhonemeSoundPlayer extends HTMLElement {
     async loadSounds() {
         try {
             const res = await fetch('https://services.apnasite.in/web-tools-backend-assignments/Vilas_Shetkar__03-phoneme-sound-player/sounds.json');
-            this.soundMap = await res.json();
+            const soundMapRaw = await res.json();
+            // Add prefix to all sound paths
+            this.soundMap = {};
+            for (const key in soundMapRaw) {
+                if (Object.prototype.hasOwnProperty.call(soundMapRaw, key)) {
+                    this.soundMap[key] = window.phonemeAppBasePath + soundMapRaw[key];
+                }
+            }
         } catch {
             alert('Could not load sounds.json');
         }

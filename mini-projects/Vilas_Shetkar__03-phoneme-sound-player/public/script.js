@@ -14,6 +14,8 @@ class PhonemeApp extends HTMLElement {
         if (currentScript) {
             basePath = currentScript.src.substring(0, currentScript.src.lastIndexOf('/') + 1);
         }
+        // Make basePath globally available
+        window.phonemeAppBasePath = basePath;
         const scripts = [
             { src: basePath + 'login-popup.js', id: 'login-popup-script' },
             { src: basePath + 'register-popup.js', id: 'register-popup-script' },
