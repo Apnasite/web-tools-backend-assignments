@@ -60,7 +60,7 @@ class LoginPopup {
         const password = this.popup.querySelector('#password').value;
 
         try {
-            const response = await fetch('./login', {
+            const response = await fetch('https://services.apnasite.in/web-tools-backend-assignments/Vilas_Shetkar__03-phoneme-sound-player/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

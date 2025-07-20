@@ -27,7 +27,7 @@ class PhonemeSoundPlayer extends HTMLElement {
 
     async loadSounds() {
         try {
-            const res = await fetch('./sounds.json');
+            const res = await fetch('https://services.apnasite.in/web-tools-backend-assignments/Vilas_Shetkar__03-phoneme-sound-player/sounds.json');
             this.soundMap = await res.json();
         } catch {
             alert('Could not load sounds.json');
@@ -215,7 +215,7 @@ class PhonemeSoundPlayer extends HTMLElement {
 
         // Store activity with JWT token if available
         const token = localStorage.getItem('token');
-        fetch('./phoneme-activity', {
+        fetch('https://services.apnasite.in/web-tools-backend-assignments/Vilas_Shetkar__03-phoneme-sound-player/phoneme-activity', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

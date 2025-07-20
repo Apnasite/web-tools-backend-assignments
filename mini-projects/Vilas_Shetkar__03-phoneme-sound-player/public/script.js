@@ -1,4 +1,4 @@
-class AuthPhonemeApp extends HTMLElement {
+class PhonemeApp extends HTMLElement {
     constructor() {
         super();
         this.loginPopup = null;
@@ -90,4 +90,10 @@ class AuthPhonemeApp extends HTMLElement {
     }
 }
 
-customElements.define('auth-phoneme-app', AuthPhonemeApp);
+customElements.define('phoneme-app', PhonemeApp);
+
+if (!window.customElementsList) window.customElementsList = [];
+
+if (!window.customElementsList.find(item => item.component === 'phoneme-app')) {
+    window.customElementsList.push({ component: 'phoneme-app', componentClass: PhonemeApp });
+}

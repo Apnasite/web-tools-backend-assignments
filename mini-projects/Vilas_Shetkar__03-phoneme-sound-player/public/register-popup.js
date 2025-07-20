@@ -60,7 +60,7 @@ class RegisterPopup {
         const mobile = this.popup.querySelector('#mobile').value;
 
         try {
-            const response = await fetch('./register', {
+            const response = await fetch('https://services.apnasite.in/web-tools-backend-assignments/Vilas_Shetkar__03-phoneme-sound-player/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
