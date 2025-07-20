@@ -1,0 +1,31 @@
+/* Phoneme Sound Player Styles */
+.letter-btn { min-width: 64px; height: 48px; margin: 2px; }
+.phoneme-card { transition: 0.3s; }
+.playing { background-color: #d1e7dd !important; border: 2px solid #0f5132 !important; }
+.tts-highlight { font-weight: bold; color: #0d6efd; }
+.highlight-key { background-color: #0d6efd !important; color: white !important; }
+.output-box { min-height: 120px; background: #fff; border-radius: 8px; border: 1px solid #eee; padding: 16px; margin-bottom: 16px; }
+
+@media (max-width: 767px) {
+    .sticky-result-mobile {
+        position: fixed;
+        left: 0; right: 0; bottom: 0; z-index: 1050;
+        background: #fff; border-top: 2px solid #0d6efd;
+        box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+        padding: 12px 8px 8px 8px; min-height: 80px;
+    }
+    .sticky-result-mobile .close-btn {
+        position: absolute; right: 12px; top: 8px; font-size: 1.5rem;
+        background: none; border: none; color: #888;
+    }
+    .sticky-result-mobile .output-box {
+        border: none; padding: 0; margin-bottom: 0; background: transparent;
+    }
+}
+
+/* Modal backdrop for popups */
+.modal-backdrop {
+    position: fixed;
+    top:0; left:0; width:100vw; height:100vh;
+    background:rgba(0,0,0,0.3); z-index:1040;
+}
