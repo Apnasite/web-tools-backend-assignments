@@ -64,6 +64,6 @@ jobs:
             docker pull $IMAGE
             docker run -d --name $REPO_NAME \
               -p ${{ secrets.CONTAINER_PORT }}:3000 \
-              -e MONGO_URI="${{ secrets.DEV_MONGOURI }}" \
+              -e MONGODB_URI="${{ secrets.DEV_MONGOURI }}" \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               $IMAGE
