@@ -11,7 +11,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/phonem
 
 async function createRouter() {
     const client = await MongoClient.connect(MONGODB_URI, { useUnifiedTopology: true });
-    const db = client.db();
+    const db = client.db('phoneme-sound-player');
     console.log('Connected to MongoDB');
 
     // Attach db to req.app.locals for every request
