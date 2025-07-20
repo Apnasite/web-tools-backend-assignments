@@ -8,10 +8,16 @@ class PhonemeApp extends HTMLElement {
     connectedCallback() {
         // Dynamically load required component scripts if not already loaded
         this._scriptElements = [];
+        // Compute base path relative to this script's location
+        const currentScript = document.currentScript || Array.from(document.getElementsByTagName('script')).find(s => s.src && s.src.includes('script.js'));
+        let basePath = '';
+        if (currentScript) {
+            basePath = currentScript.src.substring(0, currentScript.src.lastIndexOf('/') + 1);
+        }
         const scripts = [
-            { src: 'login-popup.js', id: 'login-popup-script' },
-            { src: 'register-popup.js', id: 'register-popup-script' },
-            { src: 'phoneme-sound-player.js', id: 'phoneme-sound-player-script' }
+            { src: basePath + 'login-popup.js', id: 'login-popup-script' },
+            { src: basePath + 'register-popup.js', id: 'register-popup-script' },
+            { src: basePath + 'phoneme-sound-player.js', id: 'phoneme-sound-player-script' }
         ];
         scripts.forEach(({ src, id }) => {
             if (!document.getElementById(id)) {
