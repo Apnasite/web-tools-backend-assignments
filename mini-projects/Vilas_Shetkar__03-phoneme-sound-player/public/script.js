@@ -47,7 +47,7 @@ class PhonemeApp extends HTMLElement {
     }
 
     render() {
-        // Detect domain
+        const token = localStorage.getItem('token');
         const isServicesDomain = window.location.hostname === 'services.apnasite.in';
         if (isServicesDomain) {
             this.innerHTML = `
@@ -61,15 +61,22 @@ class PhonemeApp extends HTMLElement {
             </div>
             `;
         } else {
-            // Show message and register button if not services.apnasite.in
-            this.innerHTML = `
-            <div class="text-center my-5">
-                <div class="alert alert-warning mb-4">
-                    Login/Register to access this content.
+            if (token) {
+                this.innerHTML = `
+                <div class="text-center my-5">
+                    <phoneme-sound-player></phoneme-sound-player>
                 </div>
-                <a href="/auth/register" class="btn btn-secondary">Register</a>
-            </div>
-            `;
+                `;
+            } else {
+                this.innerHTML = `
+                <div class="text-center my-5">
+                    <div class="alert alert-warning mb-4">
+                        Login/Register to access this content.
+                    </div>
+                    <a href="/auth/register" class="btn btn-secondary">Register</a>
+                </div>
+                `;
+            }
         }
     }
 
