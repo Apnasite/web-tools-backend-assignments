@@ -6,15 +6,12 @@ class PhonemeApp extends HTMLElement {
     }
 
     connectedCallback() {
-        // Dynamically load required component scripts if not already loaded
         this._scriptElements = [];
-        // Compute base path relative to this script's location
         const currentScript = document.currentScript || Array.from(document.getElementsByTagName('script')).find(s => s.src && s.src.includes('script.js'));
         let basePath = '';
         if (currentScript) {
             basePath = currentScript.src.substring(0, currentScript.src.lastIndexOf('/') + 1);
         }
-        // Make basePath globally available
         window.phonemeAppBasePath = basePath;
         const scripts = [
             { src: basePath + 'login-popup.js', id: 'login-popup-script' },
@@ -39,7 +36,6 @@ class PhonemeApp extends HTMLElement {
     }
 
     disconnectedCallback() {
-        // Remove dynamically added scripts
         if (this._scriptElements) {
             this._scriptElements.forEach(script => {
                 if (script.parentNode) {
@@ -51,16 +47,30 @@ class PhonemeApp extends HTMLElement {
     }
 
     render() {
-        this.innerHTML = `
-        <div id="auth-container" class="text-center my-5">
-            <button id="loginBtn" class="btn btn-primary m-2">Login</button>
-            <button id="registerBtn" class="btn btn-secondary m-2">Register</button>
-        </div>
-        <div id="player-container" style="display:none;">
-            <button id="logoutBtn" class="btn btn-outline-danger float-end m-2">Logout</button>
-            <phoneme-sound-player></phoneme-sound-player>
-        </div>
-        `;
+        // Detect domain
+        const isServicesDomain = window.location.hostname === 'services.apnasite.in';
+        if (isServicesDomain) {
+            this.innerHTML = `
+            <div id="auth-container" class="text-center my-5">
+                <button id="loginBtn" class="btn btn-primary m-2">Login</button>
+                <button id="registerBtn" class="btn btn-secondary m-2">Register</button>
+            </div>
+            <div id="player-container" style="display:none;">
+                <button id="logoutBtn" class="btn btn-outline-danger float-end m-2">Logout</button>
+                <phoneme-sound-player></phoneme-sound-player>
+            </div>
+            `;
+        } else {
+            // Show message and register button if not services.apnasite.in
+            this.innerHTML = `
+            <div class="text-center my-5">
+                <div class="alert alert-warning mb-4">
+                    Login/Register to access this content.
+                </div>
+                <a href="/auth/register" class="btn btn-secondary">Register</a>
+            </div>
+            `;
+        }
     }
 
     cacheDom() {
@@ -72,23 +82,22 @@ class PhonemeApp extends HTMLElement {
     }
 
     addEventListeners() {
-        this.loginBtn.onclick = () => this.showLoginPopup();
-        this.registerBtn.onclick = () => this.showRegisterPopup();
-        if (this.logoutBtn) {
-            this.logoutBtn.onclick = () => this.logout();
+        // Only add login/register/logout logic if on services.apnasite.in
+        if (window.location.hostname === 'services.apnasite.in') {
+            if (this.loginBtn) this.loginBtn.onclick = () => this.showLoginPopup();
+            if (this.registerBtn) this.registerBtn.onclick = () => this.showRegisterPopup();
+            if (this.logoutBtn) this.logoutBtn.onclick = () => this.logout();
         }
     }
 
     showLoginPopup() {
         if (this.loginPopup) return;
         this.loginPopup = new LoginPopup();
-        // Patch loginPopup close to clean up reference
         const origClose = this.loginPopup.close.bind(this.loginPopup);
         this.loginPopup.close = () => {
             origClose();
             this.loginPopup = null;
         };
-        // Patch loginPopup login to update UI on success
         const origLogin = this.loginPopup.login.bind(this.loginPopup);
         this.loginPopup.login = async () => {
             await origLogin();
@@ -102,7 +111,6 @@ class PhonemeApp extends HTMLElement {
     showRegisterPopup() {
         if (this.registerPopup) return;
         this.registerPopup = new RegisterPopup();
-        // Patch registerPopup close to clean up reference
         const origClose = this.registerPopup.close.bind(this.registerPopup);
         this.registerPopup.close = () => {
             origClose();
@@ -116,13 +124,16 @@ class PhonemeApp extends HTMLElement {
     }
 
     updateUI() {
-        const token = localStorage.getItem('token');
-        if (token) {
-            this.authContainer.style.display = 'none';
-            this.playerContainer.style.display = '';
-        } else {
-            this.authContainer.style.display = '';
-            this.playerContainer.style.display = 'none';
+        // Only run UI logic if on services.apnasite.in
+        if (window.location.hostname === 'services.apnasite.in') {
+            const token = localStorage.getItem('token');
+            if (token) {
+                if (this.authContainer) this.authContainer.style.display = 'none';
+                if (this.playerContainer) this.playerContainer.style.display = '';
+            } else {
+                if (this.authContainer) this.authContainer.style.display = '';
+                if (this.playerContainer) this.playerContainer.style.display = 'none';
+            }
         }
     }
 }
@@ -130,7 +141,6 @@ class PhonemeApp extends HTMLElement {
 customElements.define('phoneme-app', PhonemeApp);
 
 if (!window.customElementsList) window.customElementsList = [];
-
 if (!window.customElementsList.find(item => item.component === 'phoneme-app')) {
     window.customElementsList.push({ component: 'phoneme-app', componentClass: PhonemeApp });
 }
